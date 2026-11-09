@@ -18,8 +18,8 @@ Every effect respects `prefers-reduced-motion` and pauses off-screen.
 ```bash
 npm install
 npm run dev          # http://localhost:3000
-npm run build        # production build (also type-checks)
-npm start            # serve the production build
+npm run build        # static export to ./out (also type-checks)
+npm start            # preview ./out locally
 ```
 
 ## Editing content — no component changes needed
