@@ -1,0 +1,252 @@
+@import "tailwindcss";
+
+/* ---------- Design tokens ---------- */
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #f2a65a; }
+@property --n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+:root {
+  --bg: #08080a;
+  --bg-elev: #0f0f12;
+  --bg-elev-2: #16161a;
+  --fg: #ececee;
+  --fg-soft: #b4b4bc;
+  --muted: #7d7d88;
+  --line: rgb(255 255 255 / 0.07);
+  --line-strong: rgb(255 255 255 / 0.13);
+  --accent: #f2a65a;
+  --accent-fg: #1a0f04;
+  --signal: #6fd3b8;
+  --grid: rgb(255 255 255 / 0.035);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 20px 50px -20px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f7f6f3;
+  --bg-elev: #ffffff;
+  --bg-elev-2: #f0eee9;
+  --fg: #111113;
+  --fg-soft: #3b3b42;
+  --muted: #6b6b75;
+  --line: rgb(17 17 19 / 0.08);
+  --line-strong: rgb(17 17 19 / 0.16);
+  --accent: #b85c12;
+  --accent-fg: #ffffff;
+  --signal: #0f8a6c;
+  --grid: rgb(17 17 19 / 0.045);
+  --shadow: 0 1px 2px rgb(17 17 19 / 0.04), 0 16px 40px -24px rgb(17 17 19 / 0.25);
+  color-scheme: light;
+}
+
+/* Mode accents — chosen in the hero; re-themes the whole site */
+:root[data-mode="vision"] { --accent: #5fd39a; }
+:root[data-mode="neural"] { --accent: #a48bff; }
+:root[data-mode="iot"] { --accent: #4cc2ff; }
+:root[data-theme="light"][data-mode="robot"] { --accent: #b85c12; }
+:root[data-theme="light"][data-mode="vision"] { --accent: #0d7f52; }
+:root[data-theme="light"][data-mode="neural"] { --accent: #6342d6; }
+:root[data-theme="light"][data-mode="iot"] { --accent: #0a74ad; }
+:root {
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, transparent);
+  --glow: color-mix(in oklab, var(--accent) 17%, transparent);
+  transition: --accent 0.7s ease;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elev: var(--bg-elev);
+  --color-elev-2: var(--bg-elev-2);
+  --color-fg: var(--fg);
+  --color-fg-soft: var(--fg-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-signal: var(--signal);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+}
+
+/* ---------- Base ---------- */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: var(--accent-fg); }
+
+section[id] { scroll-margin-top: 80px; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Utilities ---------- */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.mask-fade-y {
+  mask-image: linear-gradient(to bottom, transparent, #000 15%, #000 85%, transparent);
+}
+.mask-radial {
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+}
+
+.panel {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+/* Cursor-following spotlight for interactive cards */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+.spotlight:hover::before { opacity: 1; }
+
+.text-gradient {
+  background: linear-gradient(180deg, var(--fg) 30%, color-mix(in oklab, var(--fg) 55%, transparent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Flowing dashes along architecture edges */
+@keyframes dash-flow { to { stroke-dashoffset: -24; } }
+.flow-line { stroke-dasharray: 4 8; animation: dash-flow 1.2s linear infinite; }
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--signal) 60%, transparent); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+.pulse-dot { animation: pulse-dot 2.2s ease-in-out infinite; }
+
+@keyframes scan {
+  0% { transform: translateY(-10%); opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { transform: translateY(1100%); opacity: 0; }
+}
+.scan-line { animation: scan 4.5s cubic-bezier(.4,0,.2,1) infinite; }
+
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee { animation: marquee 40s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+
+/* Prose for blog posts */
+.prose-post { color: var(--fg-soft); line-height: 1.8; font-size: 1.05rem; }
+.prose-post h2 { color: var(--fg); font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 1rem; letter-spacing: -0.01em; }
+.prose-post h3 { color: var(--fg); font-size: 1.2rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+.prose-post p { margin: 1.1rem 0; }
+.prose-post a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.prose-post ul, .prose-post ol { padding-left: 1.4rem; margin: 1rem 0; }
+.prose-post ul { list-style: disc; }
+.prose-post ol { list-style: decimal; }
+.prose-post li { margin: 0.35rem 0; }
+.prose-post code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-elev-2); padding: 0.15em 0.4em; border-radius: 4px; }
+.prose-post pre { background: var(--bg-elev); border: 1px solid var(--line); padding: 1rem 1.2rem; border-radius: 10px; overflow-x: auto; margin: 1.5rem 0; }
+.prose-post pre code { background: none; padding: 0; }
+.prose-post blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); font-style: italic; }
+.prose-post img { border-radius: 10px; border: 1px solid var(--line); }
+
+/* Hero entrance — CSS only so content never depends on JS to become visible */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.hero-in { animation: hero-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ---------- HUD / robot-OS details ---------- */
+.hud-corners { position: relative; }
+.hud-corners > .c { position: absolute; width: 14px; height: 14px; border-color: var(--accent); pointer-events: none; }
+.hud-corners > .c.tl { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+.hud-corners > .c.tr { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
+.hud-corners > .c.bl { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; }
+.hud-corners > .c.br { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+
+@keyframes blink { 50% { opacity: 0; } }
+.blink { animation: blink 1.1s steps(1) infinite; }
+
+/* Boot sequence: pure CSS so it always clears, even without JS */
+.boot { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--bg); animation: boot-out 0.55s cubic-bezier(.7,0,.3,1) 2.5s forwards; }
+@keyframes boot-out { to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
+.boot-line { opacity: 0; animation: boot-line 0.01s steps(1) forwards; }
+@keyframes boot-line { to { opacity: 1; } }
+.boot-bar { transform-origin: left; transform: scaleX(0); animation: boot-bar 2.2s cubic-bezier(.6,0,.2,1) forwards; }
+@keyframes boot-bar { to { transform: scaleX(1); } }
+:root[data-booted] .boot { display: none; }
+@media (prefers-reduced-motion: reduce) { .boot { display: none; } }
+
+/* Vision cursor */
+@media (pointer: fine) { .vc-on, .vc-on a, .vc-on button { cursor: crosshair; } }
+
+/* ---------- Editorial story ---------- */
+.paper-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+}
+:root[data-theme="dark"] .paper-grain { mix-blend-mode: screen; opacity: 0.06; }
+.paper-grain::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 70% at 50% 45%, transparent 55%, color-mix(in oklab, var(--fg) 7%, transparent));
+}
+
+.story-word {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(6rem, 26vw, 24rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  color: #fff;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--fg) 10%, transparent);
+  mix-blend-mode: normal;
+}
+:root[data-theme="light"] .story-word { color: rgb(255 255 255 / 0.92); }
+:root[data-theme="dark"] .story-word { color: rgb(0 0 0 / 0.55); -webkit-text-stroke: 1px rgb(255 255 255 / 0.08); }
+
+/* soft halo so copy stays readable over the ink */
+.story-copy { text-shadow: 0 0 24px var(--bg), 0 0 2px var(--bg); }
+
+/* preloader counter (pure CSS) */
+@keyframes count-up { from { --n: 0; } to { --n: 100; } }
+.boot-count { animation: count-up 2.1s cubic-bezier(.6,0,.2,1) forwards; counter-reset: n var(--n); }
+.boot-count::after { content: counter(n, decimal-leading-zero); }

@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+.env
+.vercel
+npm-debug.log*
+.DS_Store
+
+# Large local source media (compressed copies live in /public/projects)
+/projects pic/
+/sample portofili o design.mp4
